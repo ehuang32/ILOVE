@@ -1,0 +1,8 @@
+.gonormal {
+    display: inline-block;
+}
+.goright {
+    position: relative;
+    float: right;
+}
+

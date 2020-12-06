@@ -1,6 +1,6 @@
 // Connect to MongoDB Collections
 const mongoose = require('mongoose');
-const dbURI = "";
+const dbURI = "mongodb+srv://eric:eric@cluster0.nffy1.mongodb.net/ILOVE?retryWrites=true&w=majority";
 
 const options = {
     useNewUrlParser: true,

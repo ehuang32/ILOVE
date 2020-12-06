@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond:300,400&display=swap');
+
+.simple {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    /*background-color: #3d6ef5;*/
+    text-decoration: none;
+    background-color: #ffffff;
+    font-size: 3vmin;
+    margin: 5px;
+    outline:none;
+    border:0 none;
+}
+
+.simple:hover {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    border-radius: 25px;
+    /*background-color: #3d6ef5;*/
+    text-decoration: none;
+    background-color: #ff4f4f;
+}
+
+.simple:active {
+    text-decoration: none;
+    color: whitesmoke;
+    text-align: center;
+    /*background-color: #3d6ef5;*/
+    text-decoration: none;
+    background-color: #ff4f4f;
+}

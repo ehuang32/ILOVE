@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Pacifico');
+@import url('https://fonts.googleapis.com/css?family=Poiret+One');
+@import url('https://fonts.googleapis.com/css?family=Dancing+Script&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Cookie&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Josefin+Slab&display=swap');
+
+.banner {
+    background-color: #ff0800;
+}
+.bannerContent {
+    padding: 10px 10px 10px 10px;
+}
+
+.banner h1 {
+    font-family: 'Poiret One', cursive;
+}
+.banner h2 {
+    font-family: 'Pacifico', cursive;
+}
+
+
+

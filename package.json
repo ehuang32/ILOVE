@@ -6,13 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "client-install": "npm install --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ehuang32/ILOVE.git"
   },
-  "author": "",
+  "author": "Eric",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ehuang32/ILOVE/issues"

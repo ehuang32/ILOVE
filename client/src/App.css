@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+.container {
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  /*font-family: 'Open Sans Condensed', sans-serif;*/
+}
