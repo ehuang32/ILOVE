@@ -1,0 +1,54 @@
+.form {
+    font-family: "Segoe UI";
+    width: 50%;
+    min-height: 30%;
+    margin: 50px auto 30px auto;
+    background: #ffffff;
+    padding: 20px 40px;
+    border-radius: 25px;
+    padding-bottom: 30px;
+    border: 1px solid #d8d8d8;
+    position: relative;
+}
+
+.label {
+    text-align: left;
+    font-size: 20px;
+    padding: 10px 10px 10px 0px;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 0.75rem + 2px);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.addFree {
+    border-style: dashed ;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col {
+    padding-right: 5%;
+    width: 40%;
+}
+
+.deleteFree {
+    height: 40px;
+    width: 8%;
+    font-size: large;
+}

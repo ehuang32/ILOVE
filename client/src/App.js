@@ -8,6 +8,7 @@ import NavBar from './components/navBar.js';
 import Homepage from './views/homepage.js';
 import Promoter from './views/promoters.js';
 import Booking from './views/bookings.js';
+import AddPromoter from './views/addPromoter.js';
 
 // CSS
 import './App.css';
@@ -25,6 +26,7 @@ class App extends React.Component {
                     <Switch>
                         <Route path = "/" exact component = {Homepage}/>
                         <Route path = "/promoter" exact component = {Promoter}/>
+                        <Route path = "/promoter/add" exact component = {AddPromoter}/>
                         <Route path = "/booking" exact component = {Booking}/>
                     </Switch>
                 </div>

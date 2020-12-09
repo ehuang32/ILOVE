@@ -6,12 +6,16 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.1",
     "@testing-library/user-event": "^12.2.2",
+    "axios": "^0.21.0",
     "react": "^17.0.1",
     "react-awesome-button": "^6.5.1",
     "react-collapsible": "^2.8.1",
     "react-dom": "^17.0.1",
+    "react-dropdown": "^1.9.0",
+    "react-loading-screen": "0.0.17",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
+    "reactstrap": "^8.7.1",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

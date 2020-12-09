@@ -1,12 +1,12 @@
 // Middlewares
 const express = require('express');
 const bodyParser = require('body-parser');
-// const cors = require('cors');
+const cors = require('cors');
 // const path = require('path');
 const server = express();
 
 // Allows cross origin requests from localhost port 8000
-// server.use(cors());
+server.use(cors());
 
 // Express Body Parser
 server.use(bodyParser.json());

@@ -27,7 +27,9 @@ const guestlistSchema = Schema({
 // Promoter Schema
 const promSchema = Schema({
     'frees': [freeSchema],
-    'guestList': guestlistSchema
+    'guestlist': guestlistSchema
 })
 
 mongoose.model('prom', promSchema);
+mongoose.model('free', freeSchema);
+mongoose.model('guestlist', guestlistSchema);

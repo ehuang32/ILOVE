@@ -1,17 +1,25 @@
+// React Imports
 import React from 'react';
+import axios from 'axios';
+
+// Component Imports
 import Content from '../components/content.js';
-import '../css/collapsible.css';
 import Collapsible from 'react-collapsible';
-import {AwesomeButton} from 'react-awesome-button';
+import { AwesomeButton } from 'react-awesome-button';
+import Counter from '../components/counter.js';
+import LoadingScreen from '../components/loading.js';
+
+// CSS
 import "../css/dist/styles.css";
 import "../css/random.css";
-import Counter from '../components/counter.js';
+import '../css/collapsible.css';
 
 class Promoters extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            promoters: null,
             testST1: true,
             testST2: true,
             guestlist: 0
@@ -21,61 +29,151 @@ class Promoters extends React.Component {
         this.subtract = this.subtract.bind(this);
     }
 
-    buttonStrikethrough(number) {
-        if (number === 1) {
-            this.setState({
-                testST1: !this.state.testST1
+    componentDidMount() {
+        axios.get(`http://localhost:8000/api/prom/allProms`)
+            .then(response => {
+                this.setState({
+                    promoters: response.data
+                });
             })
-        }
-        if (number === 2) {
-            this.setState({
-                testST2: !this.state.testST2
-            })
-        }
+            .catch(error => {console.log(error)})
     }
 
-    add() {
-        this.setState({
-            guestlist: this.state.guestlist + 1
-        })
-    }
+    // HELPER FUNCTIONS
+    buttonStrikethrough(promIndex, freeIndex) {
+        // Change isUsed once database is changed as well
+        const oldFrees = this.state.promoters[promIndex].frees;
+        var newPromoters = this.state.promoters;
+        const currentUsed = oldFrees[freeIndex].isUsed;
+        const updatedUsed = !currentUsed;
+        newPromoters[promIndex].frees[freeIndex].isUsed = updatedUsed;
 
-    subtract() {
-        if (this.state.guestlist > 0) {
-            this.setState({
-                guestlist: this.state.guestlist - 1
-            })
+        // Change DB
+        let free = {
+            'name': oldFrees[freeIndex].name,
+            'isUsed': updatedUsed,
+            'timeUsed': oldFrees[freeIndex].timeUsed,
+            'type': oldFrees[freeIndex].type
         }
+
+        var freeSchema = oldFrees;
+        freeSchema[freeIndex] = free;
+
+        axios.put(`http://localhost:8000/api/prom/updateFrees/${this.state.promoters[promIndex]._id}`, freeSchema)
+            .then((response) => {
+                this.setState({
+                    promoters: newPromoters
+                })
+            })
+            .catch(error => {console.log(error)})
+
     }
 
+    add(promIndex) {
+        // Change guestlist number once database is changed as well
+        const oldGL = this.state.promoters[promIndex].guestlist;
+        var newPromoters = this.state.promoters;
+        const currentNumber = oldGL.number;
+        const updatedNumber = currentNumber + 1;
+        newPromoters[promIndex].guestlist.number = updatedNumber;
+
+        // Change DB
+        let GLSchema = {
+            'name': oldGL.name,
+            'type': oldGL.type,
+            'number': updatedNumber,
+            'record': oldGL.record
+        }
+
+        axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
+            .then((response) => {
+                this.setState({
+                    promoters: newPromoters
+                })
+            })
+            .catch(error => {console.log(error)})
+    }
+
+    subtract(promIndex) {
+        // Change guestlist number once database is changed as well
+        const oldGL = this.state.promoters[promIndex].guestlist;
+        var newPromoters = this.state.promoters;
+        const currentNumber = oldGL.number;
+        if (currentNumber > 0) {
+            const updatedNumber = currentNumber - 1;
+            newPromoters[promIndex].guestlist.number = updatedNumber;
+
+            // Change DB
+            let GLSchema = {
+                'name': oldGL.name,
+                'type': oldGL.type,
+                'number': updatedNumber,
+                'record': oldGL.record
+            }
+
+            axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
+                .then((response) => {
+                    this.setState({
+                        promoters: newPromoters
+                    })
+                })
+                .catch(error => {console.log(error)})
+        }
+
+
+    }
+
+    // RENDER
     render() {
-        var ABT1 = <AwesomeButton type = "toggle" onPress = {() => {this.buttonStrikethrough(1);}}>Jeff Wong</AwesomeButton>
-        if (this.state.testST1) {
-            ABT1 = <AwesomeButton type = "primary" onPress = {() => {this.buttonStrikethrough(1);}}>Jeff Wong</AwesomeButton>
+        if (!this.state.promoters) {
+            return <LoadingScreen text = {'Fetching Data...'}/>
         }
-        var ABT2 = <AwesomeButton type = "toggle" onPress = {() => {this.buttonStrikethrough(2);}}>Chris Li</AwesomeButton>
-        if (this.state.testST2) {
-            ABT2 = <AwesomeButton type = "primary" onPress = {() => {this.buttonStrikethrough(2);}}>Chris Li</AwesomeButton>
-        }
+        const myPromoters = (
+            this.state.promoters.map((prom, key) => 
+                <SinglePromoter 
+                    promoter = {prom} 
+                    index = {key}
+                    button = {this.buttonStrikethrough}
+                    minus = {this.subtract}
+                    plus = {this.add}
+                />
+            )
+        )
+        const addPromoterButton = <AwesomeButton href = "/promoter/add" type = "secondary">Add Promoter</AwesomeButton>
         return (
-            <Content heading = 'Promoters'>
-                <Collapsible trigger = "Huy Tran" >
-                    <div className = "gonormal">
-                        {ABT1}
-                        {ABT2}
-                    </div>
-                    <div className = "goright">
-                        <Counter 
-                            value = {this.state.guestlist} 
-                            minus = {this.subtract} 
-                            plus = {this.add}
-                        ></Counter>
-                    </div>
-                </Collapsible>
-                <Collapsible trigger = "TJ Gulfan">
-
-                </Collapsible>
+            <Content heading = 'Promoters' headingright = {addPromoterButton}>
+                {myPromoters}
             </Content>
+        )
+    }
+}
+
+class SinglePromoter extends React.Component {
+    render() {
+        var myFrees = (
+            this.props.promoter.frees.map((free, key) => {
+                var varType = "primary";
+                if (free.isUsed) {
+                    varType = "toggle"
+                }
+                return (
+                    <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
+                )
+            })
+        )
+        return (
+            <Collapsible trigger = {this.props.promoter.guestlist.name}>
+                <div className = "gonormal">
+                    {myFrees}
+                </div>
+                <div className = "goright">
+                    <Counter 
+                        value = {this.props.promoter.guestlist.number} 
+                        minus = {() => this.props.minus(this.props.index)}
+                        plus = {() => this.props.plus(this.props.index)}
+                    ></Counter>
+                </div>
+            </Collapsible>
         )
     }
 }
