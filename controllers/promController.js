@@ -10,6 +10,7 @@ ENDPOINTS:
 getAllPromoters
 updateFrees
 updateGL
+addPromoter
 */
 
 // GET REQUESTS
@@ -28,6 +29,19 @@ const getAllPromoters = (req, res) => {
 
 // POST REQUESTS
 // ------------------------------------------------------------------------------
+const addPromoter = (req, res) => {
+    const newPromoter = new Promoter({
+        'frees': req.body.frees,
+        'guestlist': req.body.guestlist
+    });
+    newPromoter.save((err, promoter) => {
+        if (!err) {
+            res.send(promoter);
+        } else {
+            res.send(err);
+        }
+    })
+}
 
 
 // PUT REQUESTS
@@ -73,5 +87,6 @@ const updateGL = (req, res) => {
 module.exports = {
     getAllPromoters,
     updateFrees,
-    updateGL
+    updateGL,
+    addPromoter
 }

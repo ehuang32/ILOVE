@@ -6,6 +6,9 @@ const promController = require('../controllers/promController.js');
 // Get all Promoters
 promRouter.get('/prom/allProms', promController.getAllPromoters);
 
+// Add a Promoter
+promRouter.post('/prom/add', promController.addPromoter);
+
 // Change free isUsed status
 promRouter.put('/prom/updateFrees/:promId', promController.updateFrees);
 
