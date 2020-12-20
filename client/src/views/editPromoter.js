@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Button, Form, Label, Input } from 'reactstrap';
 import Dropdown from 'react-dropdown';
 import { AwesomeButton } from 'react-awesome-button';
+import LoadingScreen from '../components/loading.js';
 import { Icon } from '@iconify/react';
 import deleteIcon from '@iconify/icons-mdi/delete';
 
@@ -10,99 +11,95 @@ import Content from '../components/content.js';
 import '../css/form.css';
 import '../css/dropdown.css';
 
-class addPromoter extends React.Component {
+class EditPromoter extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            promoter: "",
-            freesList: []
+            promoter: null
         };
         this.addFree = this.addFree.bind(this);
         this.handlePromoterInput = this.handlePromoterInput.bind(this);
         this.handleFreeInput = this.handleFreeInput.bind(this);
         this.handleFreeDropdown = this.handleFreeDropdown.bind(this);
         this.deleteFree = this.deleteFree.bind(this);
-        this.handleAdd = this.handleAdd.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+    }
+
+    componentDidMount() {
+        axios.get(`http://localhost:8000/api/prom/${this.props.match.params.promId}`)
+            .then(response => {
+                this.setState({
+                    promoter: response.data
+                });
+            })
+            .catch(error => {console.log(error)})
     }
 
     addFree(e) {
         e.preventDefault();
+        var newPromoter = this.state.promoter;
         const blankFree = {
             name: "",
             type: null
         }
-        this.setState(prevState => ({
-            freesList: [...prevState.freesList, blankFree]
-        }))
+        newPromoter.frees.push(blankFree);
+        this.setState({
+            promoter: newPromoter
+        })
     }
 
     handlePromoterInput(e) {
         let value = e.target.value;
+        var newPromoter = this.state.promoter;
+        newPromoter.guestlist.name = value;
         this.setState({
-            promoter: value
+            promoter: newPromoter
         })
     }
 
     handleFreeInput(e, index) {
         let value = e.target.value;
-        var newFreesList = this.state.freesList;
-        newFreesList[index].name = value;
+        var newPromoter = this.state.promoter;
+        newPromoter.frees[index].name = value;
         this.setState({
-            freesList: newFreesList
+            promoter: newPromoter
         })
     }
 
     handleFreeDropdown(e, index) {
         let value = e.value;
-        var newFreesList = this.state.freesList;
-        newFreesList[index].type = value;
+        var newPromoter = this.state.promoter;
+        newPromoter.frees[index].type = value;
         this.setState({
-            freesList: newFreesList
+            promoter: newPromoter
         })
     }
 
     deleteFree(index) {
-        var newFreesList = this.state.freesList;
-        newFreesList.splice(index, 1);
+        var newPromoter = this.state.promoter;
+        newPromoter.frees.splice(index, 1);
         this.setState({
-            freesList: newFreesList
+            promoter: newPromoter
         })
     }
 
-    handleAdd() {
-        const promSchema = {
-            'frees': [],
-            'guestlist': {
-                'name': this.state.promoter,
-                'type': "promoter",
-                'number': 0,
-                'record': []
-            }
-        }
-        // Use for each instead here.
-        this.state.freesList.forEach((free, key) => {
-            let freeSchema = {
-                'name': free.name,
-                'isUsed': false,
-                'timeUsed': null,
-                'type': free.type
-            }
-            promSchema.frees.push(freeSchema)
-        })
-        axios.post('http://localhost:8000/api/prom/add', promSchema)
+    handleEdit(e) {
+        axios.put(`http://localhost:8000/api/prom/updateProm/${this.props.match.params.promId}`, this.state.promoter)
             .then((response) => {
-                console.log(response)
+                console.log(response.data);
             })
             .catch(error => {console.log(error)})
         this.props.history.push('/promoter');
-
     }
 
     render() {
+        if (!this.state.promoter) {
+            return <LoadingScreen text = {'Fetching Data...'}/>
+        }
         const freeTypes = ["organiser", "normal"];
         const myFrees = (
-            this.state.freesList.map((free, key) => (
+            this.state.promoter.frees.map((free, key) => (
                 <div className = "row">
                     <div className = "col">
                         <Label className = "label">Name Given for Free</Label>
@@ -129,17 +126,17 @@ class addPromoter extends React.Component {
             ))
         )
         return (
-            <Content heading = "Add a New Promoter">
+            <Content heading = "Edit Promoter">
                 <Form className = "form">
                     <Label className = "label">Promoter Name</Label>
-                    <Input type = "text" value = {this.state.promoter} onChange = {this.handlePromoterInput}/>
+                    <Input type = "text" value = {this.state.promoter.guestlist.name} onChange = {this.handlePromoterInput}/>
                     {myFrees}
                     <Input className = "addFree" type = "submit" value = "+ Add Free" onClick = {this.addFree}/>
-                    <AwesomeButton className = "button" type = "primary" onPress = {this.handleAdd}>Add Promoter</AwesomeButton>
+                    <AwesomeButton className = "button" type = "primary" onPress = {this.handleEdit}>Finish Editing Promoter</AwesomeButton>
                 </Form>
             </Content>
         )
     }
 }
 
-export default addPromoter;
+export default EditPromoter;

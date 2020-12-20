@@ -1,6 +1,7 @@
 // React Imports
 import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // Component Imports
 import Content from '../components/content.js';
@@ -8,6 +9,9 @@ import Collapsible from 'react-collapsible';
 import { AwesomeButton } from 'react-awesome-button';
 import Counter from '../components/counter.js';
 import LoadingScreen from '../components/loading.js';
+import { Icon } from '@iconify/react';
+import deleteIcon from '@iconify/icons-mdi/delete';
+import bookEdit from '@iconify/icons-mdi/book-edit';
 
 // CSS
 import "../css/dist/styles.css";
@@ -27,6 +31,7 @@ class Promoters extends React.Component {
         this.buttonStrikethrough = this.buttonStrikethrough.bind(this);
         this.add = this.add.bind(this);
         this.subtract = this.subtract.bind(this);
+        this.deleteProm = this.deleteProm.bind(this);
     }
 
     componentDidMount() {
@@ -119,8 +124,14 @@ class Promoters extends React.Component {
                 })
                 .catch(error => {console.log(error)})
         }
+    }
 
-
+    deleteProm(promID) {
+        axios.delete(`http://localhost:8000/api/prom/deleteProm/${promID}`)
+            .then((response) => {
+                window.location.reload(false);
+            })
+            .catch(error => {console.log(error)})
     }
 
     // RENDER
@@ -134,6 +145,7 @@ class Promoters extends React.Component {
                     promoter = {prom} 
                     index = {key}
                     button = {this.buttonStrikethrough}
+                    delete = {this.deleteProm}
                     minus = {this.subtract}
                     plus = {this.add}
                 />
@@ -165,6 +177,16 @@ class SinglePromoter extends React.Component {
             <Collapsible trigger = {this.props.promoter.guestlist.name}>
                 <div className = "gonormal">
                     {myFrees}
+                </div>
+                <div className = "delete">
+                    <div onClick={() => {if (window.confirm('Are you sure you want to delete this Promoter?')) this.props.delete(this.props.promoter._id)}}>
+                        <Icon icon={deleteIcon} height = "40px" width = "30px" color = "black"/>
+                    </div>
+                </div>
+                <div className = "edit">
+                    <Link to={`/promoter/edit/${this.props.promoter._id}`}>
+                        <Icon icon={bookEdit} height = "40px" width = "30px" color = "black"/>
+                    </Link>
                 </div>
                 <div className = "goright">
                     <Counter 

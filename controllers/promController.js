@@ -2,15 +2,16 @@
 
 const mongoose = require('mongoose');
 const Promoter = mongoose.model('prom');
-const Free = mongoose.model('free');
-const Guestlist = mongoose.model('guestlist');
 
 /*
 ENDPOINTS:
 getAllPromoters
+getPromoter
+updateProm
 updateFrees
 updateGL
 addPromoter
+deleteProm
 */
 
 // GET REQUESTS
@@ -18,6 +19,19 @@ addPromoter
 // Retrieve all promoters
 const getAllPromoters = (req, res) => {
     Promoter.find((err, promoter) => {
+        if (!err) {
+            res.send(promoter);
+        } else {
+            res.send(err);
+        }
+    })
+}
+
+// Retrieve a promoter by ID
+const getPromoter = (req, res) => {
+    Promoter.findOne({
+        _id: req.params.promId
+    }, (err, promoter) => {
         if (!err) {
             res.send(promoter);
         } else {
@@ -46,6 +60,24 @@ const addPromoter = (req, res) => {
 
 // PUT REQUESTS
 // ------------------------------------------------------------------------------
+// Update Promoter
+const updateProm = (req, res) => {
+    Promoter.updateOne(
+        {_id: req.params.promId},
+        {$set: {
+            'frees': req.body.frees,
+            'guestlist': req.body.guestlist
+        }},
+        (err, promoter) => {
+            if (!err) {
+                res.send(promoter)
+            } else {
+                res.send(err)
+            }
+        }
+    )
+}
+
 // Update Frees
 const updateFrees = (req, res) => {
     Promoter.updateOne(
@@ -83,10 +115,26 @@ const updateGL = (req, res) => {
 
 // DELETE REQUESTS
 // ------------------------------------------------------------------------------
+// Delete Promoter by ID
+const deleteProm = (req, res) => {
+    Promoter.deleteOne(
+        {_id: req.params.promId},
+        (err, promoter) => {
+            if (!err) {
+                res.send(promoter)
+            } else {
+                res.send(err)
+            }
+        }
+    )
+}
 
 module.exports = {
     getAllPromoters,
+    getPromoter,
+    updateProm,
     updateFrees,
     updateGL,
-    addPromoter
+    addPromoter,
+    deleteProm
 }

@@ -5,3 +5,13 @@
     position: relative;
     float: right;
 }
+.edit {
+    position: relative;
+    float: right;
+    margin-left: 10px;
+}
+.delete {
+    position: relative;
+    float: right;
+    margin-left: 10px;
+}
