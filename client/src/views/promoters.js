@@ -13,6 +13,7 @@ import { Icon } from '@iconify/react';
 import deleteIcon from '@iconify/icons-mdi/delete';
 import bookEdit from '@iconify/icons-mdi/book-edit';
 import { Input } from 'reactstrap';
+import { Timestamp } from 'react-timestamp';
 
 // CSS
 import "../css/dist/styles.css";
@@ -62,12 +63,16 @@ class Promoters extends React.Component {
         const currentUsed = oldFrees[freeIndex].isUsed;
         const updatedUsed = !currentUsed;
         newPromoters[promIndex].frees[freeIndex].isUsed = updatedUsed;
+        var timeUsed = null;
+        if (updatedUsed) {
+            timeUsed = Date.now();
+        }
 
         // Change DB
         let free = {
             'name': oldFrees[freeIndex].name,
             'isUsed': updatedUsed,
-            'timeUsed': oldFrees[freeIndex].timeUsed,
+            'timeUsed': timeUsed,
             'type': oldFrees[freeIndex].type
         }
 
@@ -193,12 +198,27 @@ class SinglePromoter extends React.Component {
         var myFrees = (
             this.props.promoter.frees.map((free, key) => {
                 var varType = "primary";
+                if (free.type === "organiser") {
+                    varType = "link";
+                }
                 if (free.isUsed) {
                     varType = "toggle"
                 }
-                return (
-                    <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
-                )
+                if (free.timeUsed) {
+                    const date = new Date(free.timeUsed);
+                    return (
+                        <div className = "gonormal">
+                            <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
+                            <div className = "date">
+                                {date.toString().substr(0,24)}
+                            </div>
+                        </div>
+                    )
+                } else {
+                    return (
+                        <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
+                    )
+                }
             })
         )
         return (
