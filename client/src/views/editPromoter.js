@@ -10,6 +10,7 @@ import deleteIcon from '@iconify/icons-mdi/delete';
 import Content from '../components/content.js';
 import '../css/form.css';
 import '../css/dropdown.css';
+import '../css/random.css';
 
 class EditPromoter extends React.Component {
 
@@ -104,6 +105,7 @@ class EditPromoter extends React.Component {
                     <div className = "col">
                         <Label className = "label">Name Given for Free</Label>
                         <Input 
+                            className = "input"
                             type = "text" 
                             value = {free.name}
                             onChange = {(e) => this.handleFreeInput(e, key)}
@@ -129,7 +131,7 @@ class EditPromoter extends React.Component {
             <Content heading = "Edit Promoter">
                 <Form className = "form">
                     <Label className = "label">Promoter Name</Label>
-                    <Input type = "text" value = {this.state.promoter.guestlist.name} onChange = {this.handlePromoterInput}/>
+                    <Input className = "input" type = "text" value = {this.state.promoter.guestlist.name} onChange = {this.handlePromoterInput}/>
                     {myFrees}
                     <Input className = "addFree" type = "submit" value = "+ Add Free" onClick = {this.addFree}/>
                     <AwesomeButton className = "button" type = "primary" onPress = {this.handleEdit}>Finish Editing Promoter</AwesomeButton>

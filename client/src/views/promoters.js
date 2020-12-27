@@ -12,6 +12,7 @@ import LoadingScreen from '../components/loading.js';
 import { Icon } from '@iconify/react';
 import deleteIcon from '@iconify/icons-mdi/delete';
 import bookEdit from '@iconify/icons-mdi/book-edit';
+import { Input } from 'reactstrap';
 
 // CSS
 import "../css/dist/styles.css";
@@ -26,12 +27,14 @@ class Promoters extends React.Component {
             promoters: null,
             testST1: true,
             testST2: true,
-            guestlist: 0
+            guestlist: 0,
+            filter: null
         };
         this.buttonStrikethrough = this.buttonStrikethrough.bind(this);
         this.add = this.add.bind(this);
         this.subtract = this.subtract.bind(this);
         this.deleteProm = this.deleteProm.bind(this);
+        this.handleFilter = this.handleFilter.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +48,13 @@ class Promoters extends React.Component {
     }
 
     // HELPER FUNCTIONS
+    handleFilter(e) {
+        let value = e.target.value;
+        this.setState({
+            filter: value
+        });
+    }
+
     buttonStrikethrough(promIndex, freeIndex) {
         // Change isUsed once database is changed as well
         const oldFrees = this.state.promoters[promIndex].frees;
@@ -140,20 +150,38 @@ class Promoters extends React.Component {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
         const myPromoters = (
-            this.state.promoters.map((prom, key) => 
-                <SinglePromoter 
-                    promoter = {prom} 
-                    index = {key}
-                    button = {this.buttonStrikethrough}
-                    delete = {this.deleteProm}
-                    minus = {this.subtract}
-                    plus = {this.add}
-                />
+            this.state.promoters.map((prom, key) => {
+                // Case Insensitive Filter
+                const LCName = prom.guestlist.name.toLowerCase();
+                var LCFilter = "";
+                if (this.state.filter) {
+                    LCFilter = this.state.filter.toLowerCase();
+                }
+                if (LCName.includes(LCFilter)) {
+                    return (
+                        <SinglePromoter 
+                            promoter = {prom} 
+                            index = {key}
+                            button = {this.buttonStrikethrough}
+                            delete = {this.deleteProm}
+                            minus = {this.subtract}
+                            plus = {this.add}
+                        />
+                    )
+                }
+            }
             )
         )
         const addPromoterButton = <AwesomeButton href = "/promoter/add" type = "secondary">Add Promoter</AwesomeButton>
         return (
             <Content heading = 'Promoters' headingright = {addPromoterButton}>
+                <Input 
+                    type = "text" 
+                    placeholder = "Filter.."
+                    className = "input"
+                    value = {this.state.filter}
+                    onChange = {this.handleFilter}
+                />
                 {myPromoters}
             </Content>
         )
