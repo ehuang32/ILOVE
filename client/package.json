@@ -17,7 +17,7 @@
     "react-loading-screen": "0.0.17",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
-    "react-timestamp": "^5.1.0",
+    "reactjs-popup": "^2.0.4",
     "reactstrap": "^8.7.1",
     "web-vitals": "^0.2.4"
   },
