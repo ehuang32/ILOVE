@@ -28,7 +28,7 @@ class EditPromoter extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`http://localhost:8000/api/prom/${this.props.match.params.promId}`)
+        axios.get(`/api/prom/${this.props.match.params.promId}`)
             .then(response => {
                 this.setState({
                     promoter: response.data
@@ -86,7 +86,7 @@ class EditPromoter extends React.Component {
     }
 
     handleEdit(e) {
-        axios.put(`http://localhost:8000/api/prom/updateProm/${this.props.match.params.promId}`, this.state.promoter)
+        axios.put(`/api/prom/updateProm/${this.props.match.params.promId}`, this.state.promoter)
             .then((response) => {
                 console.log(response.data);
             })
