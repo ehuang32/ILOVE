@@ -13,7 +13,6 @@ import { Icon } from '@iconify/react';
 import deleteIcon from '@iconify/icons-mdi/delete';
 import bookEdit from '@iconify/icons-mdi/book-edit';
 import { Input } from 'reactstrap';
-import { Timestamp } from 'react-timestamp';
 
 // CSS
 import "../css/dist/styles.css";
@@ -26,8 +25,6 @@ class Promoters extends React.Component {
         super(props);
         this.state = {
             promoters: null,
-            testST1: true,
-            testST2: true,
             guestlist: 0,
             filter: null
         };
@@ -96,13 +93,15 @@ class Promoters extends React.Component {
         const currentNumber = oldGL.number;
         const updatedNumber = currentNumber + 1;
         newPromoters[promIndex].guestlist.number = updatedNumber;
+        var newRecord = oldGL.record;
+        newRecord.push(Date.now());
 
         // Change DB
         let GLSchema = {
             'name': oldGL.name,
             'type': oldGL.type,
             'number': updatedNumber,
-            'record': oldGL.record
+            'record': newRecord
         }
 
         axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
@@ -119,6 +118,8 @@ class Promoters extends React.Component {
         const oldGL = this.state.promoters[promIndex].guestlist;
         var newPromoters = this.state.promoters;
         const currentNumber = oldGL.number;
+        var newRecord = oldGL.record;
+        newRecord.pop();
         if (currentNumber > 0) {
             const updatedNumber = currentNumber - 1;
             newPromoters[promIndex].guestlist.number = updatedNumber;
@@ -128,7 +129,7 @@ class Promoters extends React.Component {
                 'name': oldGL.name,
                 'type': oldGL.type,
                 'number': updatedNumber,
-                'record': oldGL.record
+                'record': newRecord
             }
 
             axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
@@ -154,6 +155,7 @@ class Promoters extends React.Component {
         if (!this.state.promoters) {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
+
         const myPromoters = (
             this.state.promoters.map((prom, key) => {
                 // Case Insensitive Filter
@@ -174,10 +176,11 @@ class Promoters extends React.Component {
                         />
                     )
                 }
-            }
-            )
+            })
         )
+
         const addPromoterButton = <AwesomeButton href = "/promoter/add" type = "secondary">Add Promoter</AwesomeButton>
+        
         return (
             <Content heading = 'Promoters' headingright = {addPromoterButton}>
                 <Input 
@@ -210,7 +213,7 @@ class SinglePromoter extends React.Component {
                         <div className = "gonormal">
                             <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
                             <div className = "date">
-                                {date.toString().substr(0,24)}
+                                {date.toString().substr(16,8)}
                             </div>
                         </div>
                     )
@@ -239,6 +242,7 @@ class SinglePromoter extends React.Component {
                 <div className = "goright">
                     <Counter 
                         value = {this.props.promoter.guestlist.number} 
+                        record = {this.props.promoter.guestlist.record}
                         minus = {() => this.props.minus(this.props.index)}
                         plus = {() => this.props.plus(this.props.index)}
                     ></Counter>
