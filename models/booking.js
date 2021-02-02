@@ -26,7 +26,6 @@ const guestlistSchema = Schema({
 
 // Booking Schema
 const bookingSchema = Schema({
-    'name': String,
     'type': String,
     'date': {
         type: Date,

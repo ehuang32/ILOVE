@@ -10,7 +10,7 @@ import Content from '../components/content.js';
 import '../css/form.css';
 import '../css/dropdown.css';
 
-class addPromoter extends React.Component {
+class AddPromoter extends React.Component {
 
     constructor(props) {
         super(props);
@@ -96,7 +96,6 @@ class addPromoter extends React.Component {
             })
             .catch(error => {console.log(error)})
         this.props.history.push('/promoter');
-
     }
 
     render() {
@@ -132,7 +131,7 @@ class addPromoter extends React.Component {
             <Content heading = "Add a New Promoter">
                 <Form className = "form">
                     <Label className = "label">Promoter Name</Label>
-                    <Input type = "text" value = {this.state.promoter} onChange = {this.handlePromoterInput}/>
+                    <Input className = "input" type = "text" value = {this.state.promoter} onChange = {this.handlePromoterInput}/>
                     {myFrees}
                     <Input className = "addFree" type = "submit" value = "+ Add Free" onClick = {this.addFree}/>
                     <AwesomeButton className = "button" type = "primary" onPress = {this.handleAdd}>Add Promoter</AwesomeButton>
@@ -142,4 +141,4 @@ class addPromoter extends React.Component {
     }
 }
 
-export default addPromoter;
+export default AddPromoter;

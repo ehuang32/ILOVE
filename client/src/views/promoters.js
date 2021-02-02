@@ -25,8 +25,6 @@ class Promoters extends React.Component {
         super(props);
         this.state = {
             promoters: null,
-            testST1: true,
-            testST2: true,
             guestlist: 0,
             filter: null
         };
@@ -157,6 +155,7 @@ class Promoters extends React.Component {
         if (!this.state.promoters) {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
+
         const myPromoters = (
             this.state.promoters.map((prom, key) => {
                 // Case Insensitive Filter
@@ -177,10 +176,11 @@ class Promoters extends React.Component {
                         />
                     )
                 }
-            }
-            )
+            })
         )
+
         const addPromoterButton = <AwesomeButton href = "/promoter/add" type = "secondary">Add Promoter</AwesomeButton>
+        
         return (
             <Content heading = 'Promoters' headingright = {addPromoterButton}>
                 <Input 

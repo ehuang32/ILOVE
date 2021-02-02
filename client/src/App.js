@@ -9,9 +9,11 @@ import NavBar from './components/navBar.js';
 // View Imports
 import Homepage from './views/homepage.js';
 import Promoter from './views/promoters.js';
-import Booking from './views/bookings.js';
 import AddPromoter from './views/addPromoter.js';
 import EditPromoter from './views/editPromoter.js';
+import Booking from './views/bookings.js';
+import AddBooking from './views/addBooking.js';
+import EditBooking from './views/editBooking.js';
 
 // CSS
 import './App.css';
@@ -32,6 +34,8 @@ class App extends React.Component {
                         <Route path = "/promoter/add" component = {AddPromoter}/>
                         <Route path = "/promoter/edit/:promId" render = {(props) => <EditPromoter {...props}/>}/>
                         <Route path = "/booking" exact component = {Booking}/>
+                        <Route path = "/booking/add" component = {AddBooking}/>
+                        <Route path = "/booking/edit/:bookingId" render = {(props) => <EditBooking {...props}/>}/>
                     </Switch>
                 </div>
             </Router>
