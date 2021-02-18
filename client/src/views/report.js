@@ -25,7 +25,7 @@ class Homepage extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`http://localhost:8000/api/prom/allProms`)
+        axios.get(`/api/prom/allProms`)
             .then(response => {
                 this.setState({
                     promoters: response.data
