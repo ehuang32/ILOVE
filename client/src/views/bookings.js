@@ -15,6 +15,7 @@ import bookEdit from '@iconify/icons-mdi/book-edit';
 import viewHeadline from '@iconify/icons-mdi/view-headline';
 import { Input } from 'reactstrap';
 import Popup from 'reactjs-popup';
+import Dropdown from 'react-dropdown';
 
 // CSS
 import "../css/dist/styles.css";
@@ -29,13 +30,15 @@ class Bookings extends React.Component {
         this.state = {
             bookings: null,
             guestlist: 0,
-            filter: null
+            filter: null,
+            filterType: "No Filter"
         };
         this.buttonStrikethrough = this.buttonStrikethrough.bind(this);
         this.add = this.add.bind(this);
         this.subtract = this.subtract.bind(this);
         this.deleteProm = this.deleteBooking.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
+        this.handleDropdownFilter = this.handleDropdownFilter.bind(this);
     }
 
     componentDidMount() {
@@ -53,6 +56,13 @@ class Bookings extends React.Component {
         let value = e.target.value;
         this.setState({
             filter: value
+        })
+    }
+
+    handleDropdownFilter(e) {
+        let value = e.value;
+        this.setState({
+            filterType: value
         })
     }
 
@@ -159,6 +169,8 @@ class Bookings extends React.Component {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
 
+        const filterTypes = ["No Filter", "Table/Booth Booking", "Birthday Bottle", "Birthday List"];
+
         const myBookings = (
             this.state.bookings.map((booking, key) => {
                 // Case Insensitive Filter
@@ -168,16 +180,18 @@ class Bookings extends React.Component {
                     LCFilter = this.state.filter.toLowerCase();
                 }
                 if (LCName.includes(LCFilter)) {
-                    return (
-                        <SingleBooking
-                            booking = {booking}
-                            index = {key}
-                            button = {this.buttonStrikethrough}
-                            delete = {this.deleteBooking}
-                            minus = {this.subtract}
-                            plus = {this.add}
-                        />
-                    )
+                    if (this.state.filterType === "No Filter" || this.state.filterType === booking.type) {
+                        return (
+                            <SingleBooking
+                                booking = {booking}
+                                index = {key}
+                                button = {this.buttonStrikethrough}
+                                delete = {this.deleteBooking}
+                                minus = {this.subtract}
+                                plus = {this.add}
+                            />
+                        )
+                    }
                 }
             })
         )
@@ -192,6 +206,12 @@ class Bookings extends React.Component {
                     className = "input"
                     value = {this.state.filter}
                     onChange = {this.handleFilter}
+                />
+                <Dropdown
+                    className = "dropdown"
+                    value = {this.state.filterType}
+                    options = {filterTypes}
+                    onChange = {(e) => this.handleDropdownFilter(e)}
                 />
                 {myBookings}
             </Content>

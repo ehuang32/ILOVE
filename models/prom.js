@@ -7,8 +7,7 @@ const freeSchema = Schema({
     'name': String,
     'isUsed': Boolean,
     'timeUsed': {
-        type: Date,
-        default: Date.now()
+        type: Date
     },
     'type': String
 })
@@ -19,8 +18,7 @@ const guestlistSchema = Schema({
     'type': String,
     'number': Number,
     'record': [{
-        type: Date,
-        default: Date.now()
+        type: Date
     }]
 })
 

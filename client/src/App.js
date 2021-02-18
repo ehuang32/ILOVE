@@ -14,6 +14,7 @@ import EditPromoter from './views/editPromoter.js';
 import Booking from './views/bookings.js';
 import AddBooking from './views/addBooking.js';
 import EditBooking from './views/editBooking.js';
+import Report from './views/report.js';
 
 // CSS
 import './App.css';
@@ -36,6 +37,7 @@ class App extends React.Component {
                         <Route path = "/booking" exact component = {Booking}/>
                         <Route path = "/booking/add" component = {AddBooking}/>
                         <Route path = "/booking/edit/:bookingId" render = {(props) => <EditBooking {...props}/>}/>
+                        <Route path = "/report" exact component = {Report}/>
                     </Switch>
                 </div>
             </Router>
