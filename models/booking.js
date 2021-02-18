@@ -7,8 +7,7 @@ const freeSchema = Schema({
     'name': String,
     'isUsed': Boolean,
     'timeUsed': {
-        type: Date,
-        default: Date.now()
+        type: Date
     },
     'type': String
 })
@@ -19,8 +18,7 @@ const guestlistSchema = Schema({
     'type': String,
     'number': Number,
     'record': [{
-        type: Date,
-        default: Date.now()
+        type: Date
     }]
 })
 
@@ -28,16 +26,14 @@ const guestlistSchema = Schema({
 const bookingSchema = Schema({
     'type': String,
     'date': {
-        type: Date,
-        default: Date.now()
+        type: Date
     },
     'package': String,
     'depositPaid': Boolean,
     'fullyPaid': Boolean,
     'frees': [freeSchema],
     'timePaid': {
-        type: Date,
-        default: Date.now()
+        type: Date
     },
     'guestlist': guestlistSchema
 })

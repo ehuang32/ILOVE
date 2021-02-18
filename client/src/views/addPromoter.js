@@ -90,7 +90,7 @@ class AddPromoter extends React.Component {
             }
             promSchema.frees.push(freeSchema)
         })
-        axios.post('/api/prom/add', promSchema)
+        axios.post('http://localhost:8000/api/prom/add', promSchema)
             .then((response) => {
                 console.log(response)
             })
