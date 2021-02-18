@@ -29,7 +29,7 @@ class EditBooking extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`http://localhost:8000/api/booking/${this.props.match.params.bookingId}`)
+        axios.get(`/api/booking/${this.props.match.params.bookingId}`)
             .then(response => {
                 this.setState({
                     booking: response.data
@@ -119,7 +119,7 @@ class EditBooking extends React.Component {
 
     handleEdit(e) {
         console.log(this.state.booking);
-        axios.put(`http://localhost:8000/api/booking/updateBooking/${this.props.match.params.bookingId}`, this.state.booking)
+        axios.put(`/api/booking/updateBooking/${this.props.match.params.bookingId}`, this.state.booking)
             .then((response) => {
                 console.log(response.data);
             })

@@ -42,7 +42,7 @@ class Bookings extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`http://localhost:8000/api/booking/allBookings`)
+        axios.get(`/api/booking/allBookings`)
             .then(response => {
                 this.setState({
                     bookings: response.data
@@ -89,7 +89,7 @@ class Bookings extends React.Component {
         var freeSchema = oldFrees;
         freeSchema[freeIndex] = free;
 
-        axios.put(`http://localhost:8000/api/booking/updateFrees/${this.state.bookings[bookIndex]._id}`, freeSchema)
+        axios.put(`/api/booking/updateFrees/${this.state.bookings[bookIndex]._id}`, freeSchema)
             .then((response) => {
                 this.setState({
                     bookings: newBookings
@@ -117,7 +117,7 @@ class Bookings extends React.Component {
             'record': newRecord
         }
 
-        axios.put(`http://localhost:8000/api/bookings/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
+        axios.put(`/api/bookings/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
             .then((response) => {
                 this.setState({
                     bookings: newBookings
@@ -145,7 +145,7 @@ class Bookings extends React.Component {
                 'record': newRecord
             }
 
-            axios.put(`http://localhost:8000/api/booking/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
+            axios.put(`/api/booking/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
                 .then((response) => {
                     this.setState({
                         bookings: newBookings
@@ -156,7 +156,7 @@ class Bookings extends React.Component {
     }
 
     deleteBooking(bookingID) {
-        axios.delete(`http://localhost:8000/api/booking/deleteBooking/${bookingID}`)
+        axios.delete(`/api/booking/deleteBooking/${bookingID}`)
             .then((response) => {
                 window.location.reload(false);
             })

@@ -111,7 +111,7 @@ class AddBooking extends React.Component {
             }
             bookingSchema.frees.push(freeSchema)
         })
-        axios.post('http://localhost:8000/api/booking/add', bookingSchema)
+        axios.post('/api/booking/add', bookingSchema)
             .then((response) => {
                 console.log(response)
             })
