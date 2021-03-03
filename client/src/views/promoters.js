@@ -13,11 +13,13 @@ import { Icon } from '@iconify/react';
 import deleteIcon from '@iconify/icons-mdi/delete';
 import bookEdit from '@iconify/icons-mdi/book-edit';
 import { Input } from 'reactstrap';
+import Toggle from 'react-toggle';
 
 // CSS
 import "../css/dist/styles.css";
 import "../css/random.css";
 import '../css/collapsible.css';
+import "../css/toggle.css";
 
 class Promoters extends React.Component {
 
@@ -26,13 +28,15 @@ class Promoters extends React.Component {
         this.state = {
             promoters: null,
             guestlist: 0,
-            filter: null
+            filter: null,
+            before12: true
         };
         this.buttonStrikethrough = this.buttonStrikethrough.bind(this);
         this.add = this.add.bind(this);
         this.subtract = this.subtract.bind(this);
         this.deleteProm = this.deleteProm.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
+        this.handleToggle = this.handleToggle.bind(this);
     }
 
     componentDidMount() {
@@ -46,6 +50,12 @@ class Promoters extends React.Component {
     }
 
     // HELPER FUNCTIONS
+    handleToggle(e) {
+        this.setState({
+            before12: !this.state.before12
+        })
+    }
+
     handleFilter(e) {
         let value = e.target.value;
         this.setState({
@@ -89,18 +99,39 @@ class Promoters extends React.Component {
         // Change guestlist number once database is changed as well
         const oldGL = this.state.promoters[promIndex].guestlist;
         var newPromoters = this.state.promoters;
-        const currentNumber = oldGL.number;
+        var currentNumber;
+        if (this.state.before12) {
+            currentNumber = oldGL.numberBefore
+        } else {
+            currentNumber = oldGL.numberAfter
+        }
         const updatedNumber = currentNumber + 1;
-        newPromoters[promIndex].guestlist.number = updatedNumber;
+        if (this.state.before12) {
+            newPromoters[promIndex].guestlist.numberBefore = updatedNumber;
+        } else {
+            newPromoters[promIndex].guestlist.numberAfter = updatedNumber;
+        }
         var newRecord = oldGL.record;
         newRecord.push(Date.now());
 
         // Change DB
-        let GLSchema = {
-            'name': oldGL.name,
-            'type': oldGL.type,
-            'number': updatedNumber,
-            'record': newRecord
+        var GLSchema;
+        if (this.state.before12) {
+            GLSchema = {
+                'name': oldGL.name,
+                'type': oldGL.type,
+                'numberBefore': updatedNumber,
+                'numberAfter': oldGL.numberAfter,
+                'record': newRecord
+            }
+        } else {
+            GLSchema = {
+                'name': oldGL.name,
+                'type': oldGL.type,
+                'numberBefore': oldGL.numberBefore,
+                'numberAfter': updatedNumber,
+                'record': newRecord
+            }
         }
 
         axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
@@ -116,19 +147,40 @@ class Promoters extends React.Component {
         // Change guestlist number once database is changed as well
         const oldGL = this.state.promoters[promIndex].guestlist;
         var newPromoters = this.state.promoters;
-        const currentNumber = oldGL.number;
+        var currentNumber;
+        if (this.state.before12) {
+            currentNumber = oldGL.numberBefore
+        } else {
+            currentNumber = oldGL.numberAfter
+        }
         var newRecord = oldGL.record;
         newRecord.pop();
         if (currentNumber > 0) {
             const updatedNumber = currentNumber - 1;
-            newPromoters[promIndex].guestlist.number = updatedNumber;
+            if (this.state.before12) {
+                newPromoters[promIndex].guestlist.numberBefore = updatedNumber;
+            } else {
+                newPromoters[promIndex].guestlist.numberAfter = updatedNumber;
+            }
 
             // Change DB
-            let GLSchema = {
-                'name': oldGL.name,
-                'type': oldGL.type,
-                'number': updatedNumber,
-                'record': newRecord
+            var GLSchema;
+            if (this.state.before12) {
+                GLSchema = {
+                    'name': oldGL.name,
+                    'type': oldGL.type,
+                    'numberBefore': updatedNumber,
+                    'numberAfter': oldGL.numberAfter,
+                    'record': newRecord
+                }
+            } else {
+                GLSchema = {
+                    'name': oldGL.name,
+                    'type': oldGL.type,
+                    'numberBefore': oldGL.numberBefore,
+                    'numberAfter': updatedNumber,
+                    'record': newRecord
+                }
             }
 
             axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
@@ -167,6 +219,7 @@ class Promoters extends React.Component {
                     return (
                         <SinglePromoter 
                             promoter = {prom} 
+                            before12 = {this.state.before12}
                             index = {key}
                             button = {this.buttonStrikethrough}
                             delete = {this.deleteProm}
@@ -179,9 +232,10 @@ class Promoters extends React.Component {
         )
 
         const addPromoterButton = <AwesomeButton href = "/promoter/add" type = "secondary">Add Promoter</AwesomeButton>
+        const toggle = <Toggle checked = {this.state.before12} icons = {false} onChange = {this.handleToggle}/>
         
         return (
-            <Content heading = 'Promoters' headingright = {addPromoterButton}>
+            <Content heading = 'Promoters' headingright = {addPromoterButton} headingright2 = {toggle}>
                 <Input 
                     type = "text" 
                     placeholder = "Filter.."
@@ -220,6 +274,11 @@ class SinglePromoter extends React.Component {
                 }
             })
         )
+        var myValue = this.props.promoter.guestlist.numberBefore
+        if (!this.props.before12) {
+            myValue = this.props.promoter.guestlist.numberAfter
+        }
+
         return (
             <Collapsible trigger = {this.props.promoter.guestlist.name}>
                 <div className = "gonormal">
@@ -237,7 +296,7 @@ class SinglePromoter extends React.Component {
                 </div>
                 <div className = "goright">
                     <Counter 
-                        value = {this.props.promoter.guestlist.number} 
+                        value = {myValue} 
                         record = {this.props.promoter.guestlist.record}
                         minus = {() => this.props.minus(this.props.index)}
                         plus = {() => this.props.plus(this.props.index)}

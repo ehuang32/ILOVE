@@ -66,7 +66,8 @@ class AddPromoter extends React.Component {
             'guestlist': {
                 'name': this.state.promoter,
                 'type': "promoter",
-                'number': 0,
+                'numberBefore': 0,
+                'numberAfter': 0,
                 'record': []
             },
             'freesLimit': this.state.freesLimit

@@ -16,12 +16,14 @@ import viewHeadline from '@iconify/icons-mdi/view-headline';
 import { Input } from 'reactstrap';
 import Popup from 'reactjs-popup';
 import Dropdown from 'react-dropdown';
+import Toggle from 'react-toggle';
 
 // CSS
 import "../css/dist/styles.css";
 import "../css/random.css";
 import '../css/collapsible.css';
 import '../css/modal.css';
+import "../css/toggle.css";
 
 class Bookings extends React.Component {
 
@@ -31,7 +33,8 @@ class Bookings extends React.Component {
             bookings: null,
             guestlist: 0,
             filter: null,
-            filterType: "No Filter"
+            filterType: "No Filter",
+            before12: true
         };
         this.buttonStrikethrough = this.buttonStrikethrough.bind(this);
         this.add = this.add.bind(this);
@@ -39,6 +42,7 @@ class Bookings extends React.Component {
         this.deleteProm = this.deleteBooking.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
         this.handleDropdownFilter = this.handleDropdownFilter.bind(this);
+        this.handleToggle = this.handleToggle.bind(this);
     }
 
     componentDidMount() {
@@ -52,6 +56,12 @@ class Bookings extends React.Component {
     }
     
     // HELPER FUNCTIONS
+    handleToggle(e) {
+        this.setState({
+            before12: !this.state.before12
+        })
+    }
+
     handleFilter(e) {
         let value = e.target.value;
         this.setState({
@@ -102,18 +112,39 @@ class Bookings extends React.Component {
         // Change guestlist number once database is changed as well
         const oldGL = this.state.bookings[bookIndex].guestlist;
         var newBookings = this.state.bookings;
-        const currentNumber = oldGL.number;
+        var currentNumber;
+        if (this.state.before12) {
+            currentNumber = oldGL.numberBefore
+        } else {
+            currentNumber = oldGL.numberAfter
+        }
         const updatedNumber = currentNumber + 1;
-        newBookings[bookIndex].guestlist.number = updatedNumber;
+        if (this.state.before12) {
+            newBookings[bookIndex].guestlist.numberBefore = updatedNumber;
+        } else {
+            newBookings[bookIndex].guestlist.numberAfter = updatedNumber;
+        }
         var newRecord = oldGL.record;
         newRecord.push(Date.now());
 
         // Change DB
-        let GLSchema = {
-            'name': oldGL.name,
-            'type': oldGL.type,
-            'number': updatedNumber,
-            'record': newRecord
+        var GLSchema;
+        if (this.state.before12) {
+            GLSchema = {
+                'name': oldGL.name,
+                'type': oldGL.type,
+                'numberBefore': updatedNumber,
+                'numberAfter': oldGL.numberAfter,
+                'record': newRecord
+            }
+        } else {
+            GLSchema = {
+                'name': oldGL.name,
+                'type': oldGL.type,
+                'numberBefore': oldGL.numberBefore,
+                'numberAfter': updatedNumber,
+                'record': newRecord
+            }
         }
 
         axios.put(`http://localhost:8000/api/bookings/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
@@ -129,19 +160,40 @@ class Bookings extends React.Component {
         // Change guestlist number once database is changed as well
         const oldGL = this.state.bookings[bookIndex].guestlist;
         var newBookings = this.state.bookings;
-        const currentNumber = oldGL.number;
+        var currentNumber;
+        if (this.state.before12) {
+            currentNumber = oldGL.numberBefore
+        } else {
+            currentNumber = oldGL.numberAfter
+        }
         var newRecord = oldGL.record;
         newRecord.pop();
         if (currentNumber > 0) {
             const updatedNumber = currentNumber - 1;
-            newBookings[bookIndex].guestlist.number = updatedNumber;
+            if (this.state.before12) {
+                newBookings[bookIndex].guestlist.numberBefore = updatedNumber;
+            } else {
+                newBookings[bookIndex].guestlist.numberAfter = updatedNumber;
+            }
 
             // Change DB
-            let GLSchema = {
-                'name': oldGL.name,
-                'type': oldGL.type,
-                'number': updatedNumber,
-                'record': newRecord
+            var GLSchema;
+            if (this.state.before12) {
+                GLSchema = {
+                    'name': oldGL.name,
+                    'type': oldGL.type,
+                    'numberBefore': updatedNumber,
+                    'numberAfter': oldGL.numberAfter,
+                    'record': newRecord
+                }
+            } else {
+                GLSchema = {
+                    'name': oldGL.name,
+                    'type': oldGL.type,
+                    'numberBefore': oldGL.numberBefore,
+                    'numberAfter': updatedNumber,
+                    'record': newRecord
+                }
             }
 
             axios.put(`http://localhost:8000/api/booking/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
@@ -183,6 +235,7 @@ class Bookings extends React.Component {
                         return (
                             <SingleBooking
                                 booking = {booking}
+                                before12 = {this.state.before12}
                                 index = {key}
                                 button = {this.buttonStrikethrough}
                                 delete = {this.deleteBooking}
@@ -196,9 +249,10 @@ class Bookings extends React.Component {
         )
 
         const addBookingButton = <AwesomeButton href = "/booking/add" type = "secondary">Add Booking</AwesomeButton>
+        const toggle = <Toggle checked = {this.state.before12} icons = {false} onChange = {this.handleToggle}/>
         
         return (
-            <Content heading = 'Bookings' headingright = {addBookingButton}>
+            <Content heading = 'Bookings' headingright = {addBookingButton} headingright2 = {toggle}>
                 <Input
                     type = "text"
                     placeholder = "Filter.."
@@ -243,6 +297,11 @@ class SingleBooking extends React.Component {
                 }
             })
         )
+        var myValue = this.props.booking.guestlist.numberBefore
+        if (!this.props.before12) {
+            myValue = this.props.booking.guestlist.numberAfter
+        }
+
         return (
             <Collapsible trigger = {this.props.booking.guestlist.name}>
                 <div className = "gonormal">
@@ -260,7 +319,7 @@ class SingleBooking extends React.Component {
                 </div>
                 <div className = "goright">
                     <Counter 
-                        value = {this.props.booking.guestlist.number} 
+                        value = {myValue} 
                         record = {this.props.booking.guestlist.record}
                         minus = {() => this.props.minus(this.props.index)}
                         plus = {() => this.props.plus(this.props.index)}

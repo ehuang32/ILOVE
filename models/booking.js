@@ -15,7 +15,8 @@ const freeSchema = Schema({
 const guestlistSchema = Schema({
     'name': String,
     'type': String,
-    'number': Number,
+    'numberBefore': Number,
+    'numberAfter': Number,
     'record': [{
         type: Date
     }]

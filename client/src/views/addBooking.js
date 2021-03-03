@@ -88,7 +88,8 @@ class AddBooking extends React.Component {
             'guestlist': {
                 'name': this.state.booking,
                 'type': "booking",
-                'number': 0,
+                'numberBefore': 0,
+                'numberAfter': 0,
                 'record': []
             },
             'freesLimit': this.state.freesLimit
