@@ -42,7 +42,7 @@ class Bookings extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/booking/allBookings`)
+        axios.get(`http://localhost:8000/api/booking/allBookings`)
             .then(response => {
                 this.setState({
                     bookings: response.data
@@ -82,14 +82,13 @@ class Bookings extends React.Component {
         let free = {
             'name': oldFrees[freeIndex].name,
             'isUsed': updatedUsed,
-            'timeUsed': timeUsed,
-            'type': oldFrees[freeIndex].type
+            'timeUsed': timeUsed
         }
 
         var freeSchema = oldFrees;
         freeSchema[freeIndex] = free;
 
-        axios.put(`/api/booking/updateFrees/${this.state.bookings[bookIndex]._id}`, freeSchema)
+        axios.put(`http://localhost:8000/api/booking/updateFrees/${this.state.bookings[bookIndex]._id}`, freeSchema)
             .then((response) => {
                 this.setState({
                     bookings: newBookings
@@ -117,7 +116,7 @@ class Bookings extends React.Component {
             'record': newRecord
         }
 
-        axios.put(`/api/bookings/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
+        axios.put(`http://localhost:8000/api/bookings/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
             .then((response) => {
                 this.setState({
                     bookings: newBookings
@@ -145,7 +144,7 @@ class Bookings extends React.Component {
                 'record': newRecord
             }
 
-            axios.put(`/api/booking/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
+            axios.put(`http://localhost:8000/api/booking/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
                 .then((response) => {
                     this.setState({
                         bookings: newBookings
@@ -156,7 +155,7 @@ class Bookings extends React.Component {
     }
 
     deleteBooking(bookingID) {
-        axios.delete(`/api/booking/deleteBooking/${bookingID}`)
+        axios.delete(`http://localhost:8000/api/booking/deleteBooking/${bookingID}`)
             .then((response) => {
                 window.location.reload(false);
             })
@@ -224,9 +223,6 @@ class SingleBooking extends React.Component {
         var myFrees = (
             this.props.booking.frees.map((free, key) => {
                 var varType = "primary";
-                if (free.type === "organiser") {
-                    varType = "link";
-                }
                 if (free.isUsed) {
                     varType = "toggle"
                 }
@@ -234,10 +230,10 @@ class SingleBooking extends React.Component {
                     const date = new Date(free.timeUsed);
                     return (
                         <div className = "gonormal">
-                            <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
                             <div className = "date">
-                                {date.toString().substr(0,24)}
+                                {date.toString().substr(16,8)}
                             </div>
+                            <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
                         </div>
                     )
                 } else {
@@ -285,7 +281,8 @@ class SingleBooking extends React.Component {
                                         <b>Package: </b>{this.props.booking.package} <br/>
                                         <b>Deposit Paid: </b>{this.props.booking.depositPaid ? "Yes" : "No"} <br/>
                                         <b>Fully Paid: </b>{this.props.booking.fullyPaid ? "Yes" : "No"} <br/>
-                                        <b>Time Paid: </b>{this.props.booking.timePaid.toString().substr(0,10)}
+                                        <b>Time Paid: </b>{this.props.booking.timePaid.toString().substr(0,10)} <br/>
+                                        <b>Frees Limit: </b>{this.props.booking.freesLimit}
                                     </div>
                                 </div>
                             )

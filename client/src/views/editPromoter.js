@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import { Button, Form, Label, Input } from 'reactstrap';
-import Dropdown from 'react-dropdown';
 import { AwesomeButton } from 'react-awesome-button';
 import LoadingScreen from '../components/loading.js';
 import { Icon } from '@iconify/react';
@@ -22,13 +21,12 @@ class EditPromoter extends React.Component {
         this.addFree = this.addFree.bind(this);
         this.handlePromoterInput = this.handlePromoterInput.bind(this);
         this.handleFreeInput = this.handleFreeInput.bind(this);
-        this.handleFreeDropdown = this.handleFreeDropdown.bind(this);
         this.deleteFree = this.deleteFree.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
     }
 
     componentDidMount() {
-        axios.get(`/api/prom/${this.props.match.params.promId}`)
+        axios.get(`http://localhost:8000/api/prom/${this.props.match.params.promId}`)
             .then(response => {
                 this.setState({
                     promoter: response.data
@@ -41,8 +39,7 @@ class EditPromoter extends React.Component {
         e.preventDefault();
         var newPromoter = this.state.promoter;
         const blankFree = {
-            name: "",
-            type: null
+            name: ""
         }
         newPromoter.frees.push(blankFree);
         this.setState({
@@ -52,8 +49,18 @@ class EditPromoter extends React.Component {
 
     handlePromoterInput(e) {
         let value = e.target.value;
+        let name = e.target.name;
         var newPromoter = this.state.promoter;
-        newPromoter.guestlist.name = value;
+        switch (name) {
+            case 'name':
+                newPromoter.guestlist.name = value;
+                break;
+            case 'freesLimit':
+                newPromoter.freesLimit = value;
+                break;
+            default:
+                console.log('Invalid Name');
+        }
         this.setState({
             promoter: newPromoter
         })
@@ -68,15 +75,6 @@ class EditPromoter extends React.Component {
         })
     }
 
-    handleFreeDropdown(e, index) {
-        let value = e.value;
-        var newPromoter = this.state.promoter;
-        newPromoter.frees[index].type = value;
-        this.setState({
-            promoter: newPromoter
-        })
-    }
-
     deleteFree(index) {
         var newPromoter = this.state.promoter;
         newPromoter.frees.splice(index, 1);
@@ -86,7 +84,7 @@ class EditPromoter extends React.Component {
     }
 
     handleEdit(e) {
-        axios.put(`/api/prom/updateProm/${this.props.match.params.promId}`, this.state.promoter)
+        axios.put(`http://localhost:8000/api/prom/updateProm/${this.props.match.params.promId}`, this.state.promoter)
             .then((response) => {
                 console.log(response.data);
             })
@@ -98,7 +96,6 @@ class EditPromoter extends React.Component {
         if (!this.state.promoter) {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
-        const freeTypes = ["organiser", "normal"];
         const myFrees = (
             this.state.promoter.frees.map((free, key) => (
                 <div className = "row">
@@ -111,16 +108,6 @@ class EditPromoter extends React.Component {
                             onChange = {(e) => this.handleFreeInput(e, key)}
                         />
                     </div>
-                    <div className = "col">
-                        <Label className = "label">Type of Free</Label>
-                        <Dropdown
-                            className = "form-control"
-                            value = {free.type}
-                            options = {freeTypes} 
-                            onChange = {(e) => this.handleFreeDropdown(e, key)} 
-                            placeholder = "Select a Type" 
-                        />                    
-                    </div>
                     <Button className = "deleteFree" onClick = {() => this.deleteFree(key)}>
                         <Icon icon={deleteIcon} height = "30px" width = "25px" color = "black"/>
                     </Button>
@@ -131,7 +118,9 @@ class EditPromoter extends React.Component {
             <Content heading = "Edit Promoter">
                 <Form className = "form">
                     <Label className = "label">Promoter Name</Label>
-                    <Input className = "input" type = "text" value = {this.state.promoter.guestlist.name} onChange = {this.handlePromoterInput}/>
+                    <Input className = "input" type = "text" name = "name" value = {this.state.promoter.guestlist.name} onChange = {this.handlePromoterInput}/>
+                    <Label className = "label">Frees Limit</Label>
+                    <Input className = "input" type = "number" name = "freesLimit" value = {this.state.promoter.freesLimit} onChange = {this.handlePromoterInput}/>
                     {myFrees}
                     <Input className = "addFree" type = "submit" value = "+ Add Free" onClick = {this.addFree}/>
                     <AwesomeButton className = "button" type = "primary" onPress = {this.handleEdit}>Finish Editing Promoter</AwesomeButton>

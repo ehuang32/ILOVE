@@ -46,7 +46,8 @@ const getPromoter = (req, res) => {
 const addPromoter = (req, res) => {
     const newPromoter = new Promoter({
         'frees': req.body.frees,
-        'guestlist': req.body.guestlist
+        'guestlist': req.body.guestlist,
+        'freesLimit': req.body.freesLimit
     });
     newPromoter.save((err, promoter) => {
         if (!err) {
@@ -66,7 +67,8 @@ const updateProm = (req, res) => {
         {_id: req.params.promId},
         {$set: {
             'frees': req.body.frees,
-            'guestlist': req.body.guestlist
+            'guestlist': req.body.guestlist,
+            'freesLimit': req.body.freesLimit
         }},
         (err, promoter) => {
             if (!err) {
@@ -78,7 +80,7 @@ const updateProm = (req, res) => {
     )
 }
 
-// Update Frees
+// Update Frees (used for use/un-use frees)
 const updateFrees = (req, res) => {
     Promoter.updateOne(
         {_id: req.params.promId},
@@ -96,7 +98,7 @@ const updateFrees = (req, res) => {
 
 }
 
-// Update Guestlist
+// Update Guestlist (used for +-)
 const updateGL = (req, res) => {
     Promoter.updateOne(
         {_id: req.params.promId},

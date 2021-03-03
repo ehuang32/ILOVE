@@ -22,12 +22,12 @@ class AddBooking extends React.Component {
             package: "",
             depositPaid: false,
             fullyPaid: false,
-            timePaid: Date.now()
+            timePaid: Date.now(),
+            freesLimit: 0
         };
         this.addFree = this.addFree.bind(this);
         this.handleBookingInput = this.handleBookingInput.bind(this);
         this.handleFreeInput = this.handleFreeInput.bind(this);
-        this.handleFreeDropdown = this.handleFreeDropdown.bind(this);
         this.deleteFree = this.deleteFree.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleBookingDropdown = this.handleBookingDropdown.bind(this);
@@ -56,15 +56,6 @@ class AddBooking extends React.Component {
         let value = e.target.value;
         var newFreesList = this.state.freesList;
         newFreesList[index].name = value;
-        this.setState({
-            freesList: newFreesList
-        })
-    }
-
-    handleFreeDropdown(e, index) {
-        let value = e.value;
-        var newFreesList = this.state.freesList;
-        newFreesList[index].type = value;
         this.setState({
             freesList: newFreesList
         })
@@ -99,19 +90,19 @@ class AddBooking extends React.Component {
                 'type': "booking",
                 'number': 0,
                 'record': []
-            }
+            },
+            'freesLimit': this.state.freesLimit
         }
         // Use for each instead here.
         this.state.freesList.forEach((free, key) => {
             let freeSchema = {
                 'name': free.name,
                 'isUsed': false,
-                'timeUsed': null,
-                'type': free.type
+                'timeUsed': null
             }
             bookingSchema.frees.push(freeSchema)
         })
-        axios.post('/api/booking/add', bookingSchema)
+        axios.post('http://localhost:8000/api/booking/add', bookingSchema)
             .then((response) => {
                 console.log(response)
             })
@@ -120,7 +111,6 @@ class AddBooking extends React.Component {
     }
 
     render() {
-        const freeTypes = ["organiser", "normal"];
         const bookingTypes = ["Table/Booth Booking", "Birthday Bottle", "Birthday List"]
         const myFrees = (
             this.state.freesList.map((free, key) => (
@@ -131,16 +121,6 @@ class AddBooking extends React.Component {
                             type = "text"
                             value = {free.name}
                             onChange = {(e) => this.handleFreeInput(e, key)}
-                        />
-                    </div>
-                    <div className = "col">
-                        <Label className = "label">Type of Free</Label>
-                        <Dropdown
-                            className = "form-control"
-                            value = {free.type}
-                            options = {freeTypes}
-                            onChange = {(e) => this.handleFreeDropdown(e, key)}
-                            placeholder = "Select a Type"
                         />
                     </div>
                     <Button className = "deleteFree" onClick = {() => this.deleteFree(key)}>
@@ -174,6 +154,8 @@ class AddBooking extends React.Component {
                     <br></br>
                     <Label className = "label">Time Paid</Label>
                     <Input className = "input" type = "date" name = "timePaid" value = {this.state.timePaid} onChange = {this.handleBookingInput}/>
+                    <Label className = "label">Frees Limit</Label>
+                    <Input className = "input" type = "number" name = "freesLimit" value = {this.state.freesLimit} onChange = {this.handleBookingInput}/>
                     {myFrees}
                     <Input className = "addFree" type = "submit" value = "+ Add Free" onClick = {this.addFree}/>
                     <AwesomeButton className = "button" type = "primary" onPress = {this.handleAdd}>Add Booking</AwesomeButton>

@@ -21,6 +21,8 @@
 }
 
 .date {
+    height: 14px;
+    margin-left: 10%;
     display: block;
     font-family: sans-serif;
 }

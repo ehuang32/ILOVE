@@ -8,8 +8,7 @@ const freeSchema = Schema({
     'isUsed': Boolean,
     'timeUsed': {
         type: Date
-    },
-    'type': String
+    }
 })
 
 // GuestList Schema
@@ -25,7 +24,8 @@ const guestlistSchema = Schema({
 // Promoter Schema
 const promSchema = Schema({
     'frees': [freeSchema],
-    'guestlist': guestlistSchema
+    'guestlist': guestlistSchema,
+    'freesLimit': Number
 })
 
 mongoose.model('prom', promSchema);

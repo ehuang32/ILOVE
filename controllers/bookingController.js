@@ -54,7 +54,8 @@ const addBooking = (req, res) => {
         'fullyPaid': req.body.fullyPaid,
         'frees': req.body.frees,
         'timePaid': req.body.timePaid,
-        'guestlist': req.body.guestlist
+        'guestlist': req.body.guestlist,
+        'freesLimit': req.body.freesLimit
     });
     newBooking.save((err, booking) => {
         if (!err) {
@@ -81,7 +82,8 @@ const updateBooking = (req, res) => {
             'fullyPaid': req.body.fullyPaid,
             'frees': req.body.frees,
             'timePaid': req.body.timePaid,
-            'guestlist': req.body.guestlist
+            'guestlist': req.body.guestlist,
+            'freesLimit': req.body.freesLimit
         }},
         (err, booking) => {
             if (!err) {

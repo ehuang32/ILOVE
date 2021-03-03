@@ -8,8 +8,7 @@ const freeSchema = Schema({
     'isUsed': Boolean,
     'timeUsed': {
         type: Date
-    },
-    'type': String
+    }
 })
 
 // GuestList Schema
@@ -35,7 +34,8 @@ const bookingSchema = Schema({
     'timePaid': {
         type: Date
     },
-    'guestlist': guestlistSchema
+    'guestlist': guestlistSchema,
+    'freesLimit': Number
 })
 
 mongoose.model('booking', bookingSchema);

@@ -23,13 +23,12 @@ class EditBooking extends React.Component {
         this.handleBookingInput = this.handleBookingInput.bind(this);
         this.handleBookingDropdown = this.handleBookingDropdown.bind(this);
         this.handleFreeInput = this.handleFreeInput.bind(this);
-        this.handleFreeDropdown = this.handleFreeDropdown.bind(this);
         this.deleteFree = this.deleteFree.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
     }
 
     componentDidMount() {
-        axios.get(`/api/booking/${this.props.match.params.bookingId}`)
+        axios.get(`http://localhost:8000/api/booking/${this.props.match.params.bookingId}`)
             .then(response => {
                 this.setState({
                     booking: response.data
@@ -74,6 +73,9 @@ class EditBooking extends React.Component {
             case 'timePaid':
                 newBooking.timePaid = value;
                 break;
+            case 'freesLimit':
+                newBooking.freesLimit = value;
+                break;
             default:
                 console.log('Invalid Name');
         }
@@ -100,15 +102,6 @@ class EditBooking extends React.Component {
         })
     }
 
-    handleFreeDropdown(e, index) {
-        let value = e.value;
-        var newBooking = this.state.booking;
-        newBooking.frees[index].type = value;
-        this.setState({
-            booking: newBooking
-        })
-    }
-
     deleteFree(index) {
         var newBooking = this.state.booking;
         newBooking.frees.splice(index, 1);
@@ -119,7 +112,7 @@ class EditBooking extends React.Component {
 
     handleEdit(e) {
         console.log(this.state.booking);
-        axios.put(`/api/booking/updateBooking/${this.props.match.params.bookingId}`, this.state.booking)
+        axios.put(`http://localhost:8000/api/booking/updateBooking/${this.props.match.params.bookingId}`, this.state.booking)
             .then((response) => {
                 console.log(response.data);
             })
@@ -131,7 +124,6 @@ class EditBooking extends React.Component {
         if (!this.state.booking) {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
-        const freeTypes = ["organiser", "normal"];
         const bookingTypes = ["Table/Booth Booking", "Birthday Bottle", "Birthday List"]
         const myFrees = (
             this.state.booking.frees.map((free, key) => (
@@ -144,16 +136,6 @@ class EditBooking extends React.Component {
                             value = {free.name}
                             onChange = {(e) => this.handleFreeInput(e, key)}
                         />
-                    </div>
-                    <div className = "col">
-                        <Label className = "label">Type of Free</Label>
-                        <Dropdown
-                            className = "form-control"
-                            value = {free.type}
-                            options = {freeTypes} 
-                            onChange = {(e) => this.handleFreeDropdown(e, key)} 
-                            placeholder = "Select a Type" 
-                        />                    
                     </div>
                     <Button className = "deleteFree" onClick = {() => this.deleteFree(key)}>
                         <Icon icon={deleteIcon} height = "30px" width = "25px" color = "black"/>
@@ -187,6 +169,8 @@ class EditBooking extends React.Component {
                     <br></br>
                     <Label className = "label">Time Paid</Label>
                     <Input className = "input" type = "date" name = "timePaid" value = {this.state.booking.timePaid.toString().substr(0,10)} onChange = {this.handleBookingInput}/>
+                    <Label className = "label">Frees Limit</Label>
+                    <Input className = "input" type = "number" name = "freesLimit" value = {this.state.booking.freesLimit} onChange = {this.handleBookingInput}/>
                     {myFrees}
                     <Input className = "addFree" type = "submit" value = "+ Add Free" onClick = {this.addFree}/>
                     <AwesomeButton className = "button" type = "primary" onPress = {this.handleEdit}>Finish Editing Promoter</AwesomeButton>

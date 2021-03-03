@@ -25,7 +25,7 @@ class Homepage extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/prom/allProms`)
+        axios.get(`http://localhost:8000/api/prom/allProms`)
             .then(response => {
                 this.setState({
                     promoters: response.data
@@ -66,7 +66,7 @@ class Homepage extends React.Component {
                     value = {this.state.commission}
                     onChange = {this.handleInput}
                 />
-                <div className="ag-theme-alpine" style={{ height: 400, width: 1500}}>
+                <div className="ag-theme-alpine" style={{ height: 400}}>
                     <AgGridReact 
                         rowData = {rowData}
                         rowSelection = "multiple"

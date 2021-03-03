@@ -36,7 +36,7 @@ class Promoters extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/prom/allProms`)
+        axios.get(`http://localhost:8000/api/prom/allProms`)
             .then(response => {
                 this.setState({
                     promoters: response.data
@@ -69,14 +69,13 @@ class Promoters extends React.Component {
         let free = {
             'name': oldFrees[freeIndex].name,
             'isUsed': updatedUsed,
-            'timeUsed': timeUsed,
-            'type': oldFrees[freeIndex].type
+            'timeUsed': timeUsed
         }
 
         var freeSchema = oldFrees;
         freeSchema[freeIndex] = free;
 
-        axios.put(`/api/prom/updateFrees/${this.state.promoters[promIndex]._id}`, freeSchema)
+        axios.put(`http://localhost:8000/api/prom/updateFrees/${this.state.promoters[promIndex]._id}`, freeSchema)
             .then((response) => {
                 this.setState({
                     promoters: newPromoters
@@ -104,7 +103,7 @@ class Promoters extends React.Component {
             'record': newRecord
         }
 
-        axios.put(`/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
+        axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
             .then((response) => {
                 this.setState({
                     promoters: newPromoters
@@ -132,7 +131,7 @@ class Promoters extends React.Component {
                 'record': newRecord
             }
 
-            axios.put(`/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
+            axios.put(`http://localhost:8000/api/prom/updateGL/${this.state.promoters[promIndex]._id}`, GLSchema)
                 .then((response) => {
                     this.setState({
                         promoters: newPromoters
@@ -143,7 +142,7 @@ class Promoters extends React.Component {
     }
 
     deleteProm(promID) {
-        axios.delete(`/api/prom/deleteProm/${promID}`)
+        axios.delete(`http://localhost:8000/api/prom/deleteProm/${promID}`)
             .then((response) => {
                 window.location.reload(false);
             })
@@ -201,9 +200,6 @@ class SinglePromoter extends React.Component {
         var myFrees = (
             this.props.promoter.frees.map((free, key) => {
                 var varType = "primary";
-                if (free.type === "organiser") {
-                    varType = "link";
-                }
                 if (free.isUsed) {
                     varType = "toggle"
                 }
@@ -211,10 +207,10 @@ class SinglePromoter extends React.Component {
                     const date = new Date(free.timeUsed);
                     return (
                         <div className = "gonormal">
-                            <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
                             <div className = "date">
                                 {date.toString().substr(16,8)}
                             </div>
+                            <AwesomeButton type = {varType} onPress = {() => this.props.button(this.props.index, key)}>{free.name}</AwesomeButton>
                         </div>
                     )
                 } else {
