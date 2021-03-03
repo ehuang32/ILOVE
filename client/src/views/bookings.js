@@ -146,8 +146,7 @@ class Bookings extends React.Component {
                 'record': newRecord
             }
         }
-
-        axios.put(`http://localhost:8000/api/bookings/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
+        axios.put(`http://localhost:8000/api/booking/updateGL/${this.state.bookings[bookIndex]._id}`, GLSchema)
             .then((response) => {
                 this.setState({
                     bookings: newBookings
