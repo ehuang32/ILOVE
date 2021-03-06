@@ -83,10 +83,17 @@ class AddPromoter extends React.Component {
         })
         axios.post('http://localhost:8000/api/prom/add', promSchema)
             .then((response) => {
-                console.log(response)
+                let addPromSchema = {
+                    'promoterId': response.data._id
+                }
+                axios.put(`http://localhost:8000/api/week/addPromoter/${this.props.match.params.weekId}`, addPromSchema)
+                    .then((response2) => {
+                        console.log(response2);
+                    })
+                    .catch(error2 => {console.log(error2)})
             })
             .catch(error => {console.log(error)})
-        this.props.history.push('/promoter');
+        this.props.history.push(`/promoter/week/${this.props.match.params.weekId}`);
     }
 
     render() {

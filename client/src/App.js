@@ -15,6 +15,7 @@ import Booking from './views/bookings.js';
 import AddBooking from './views/addBooking.js';
 import EditBooking from './views/editBooking.js';
 import Report from './views/report.js';
+import PromoterHistory from './views/promoterHistory.js'
 
 // CSS
 import './App.css';
@@ -32,11 +33,13 @@ class App extends React.Component {
                     <Switch>
                         <Route path = "/" exact component = {Homepage}/>
                         <Route path = "/promoter" exact component = {Promoter}/>
-                        <Route path = "/promoter/add" component = {AddPromoter}/>
+                        <Route path = "/promoter/week/:weekId" render = {(props) => <Promoter {...props}/>}/>
+                        <Route path = "/promoter/add/:weekId" component = {AddPromoter}/>
                         <Route path = "/promoter/edit/:promId" render = {(props) => <EditPromoter {...props}/>}/>
                         <Route path = "/booking" exact component = {Booking}/>
                         <Route path = "/booking/add" component = {AddBooking}/>
                         <Route path = "/booking/edit/:bookingId" render = {(props) => <EditBooking {...props}/>}/>
+                        <Route path = "/history/promoter" exact component = {PromoterHistory}/>
                         <Route path = "/report" exact component = {Report}/>
                     </Switch>
                 </div>

@@ -18,10 +18,12 @@ require('./models/database.js');
 // Routes Setup
 const promRoutes = require('./routes/promRoutes.js');
 const bookingRoutes = require('./routes/bookingRoutes.js');
+const weekRoutes = require('./routes/weekRoutes.js');
 
 // Specify which routes app will use
 server.use('/api', promRoutes);
 server.use('/api', bookingRoutes);
+server.use('/api', weekRoutes);
 
 // Homepage
 server.get('/api', function(req, res) {

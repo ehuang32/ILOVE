@@ -48,6 +48,8 @@ class Bookings extends React.Component {
     componentDidMount() {
         axios.get(`http://localhost:8000/api/booking/allBookings`)
             .then(response => {
+                console.log(response.data);
+                console.log(response.data.length);
                 this.setState({
                     bookings: response.data
                 });

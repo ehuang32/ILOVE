@@ -26,6 +26,7 @@ class Promoters extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            week: null,
             promoters: null,
             guestlist: 0,
             filter: null,
@@ -37,19 +38,68 @@ class Promoters extends React.Component {
         this.deleteProm = this.deleteProm.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
         this.handleToggle = this.handleToggle.bind(this);
+        this.handleFinalise = this.handleFinalise.bind(this);
     }
 
     componentDidMount() {
-        axios.get(`http://localhost:8000/api/prom/allProms`)
+        var myWeekId;
+        if (this.props.match.params.weekId) {
+            myWeekId = this.props.match.params.weekId
+        } else {
+            myWeekId = '60407bdb89bf23d411a39d77'
+        }
+        axios.get(`http://localhost:8000/api/week/${myWeekId}`)
             .then(response => {
+                console.log(response.data);
+                var myPromoters = [];
+                response.data.promoterIds.map((promId, key) => {
+                    axios.get(`http://localhost:8000/api/prom/${promId}`)
+                        .then(response2 => {
+                            myPromoters.push(response2.data);
+                            this.setState({
+                                promoters: myPromoters
+                            })
+                        })
+                        .catch(error2 => {console.log(error2)})
+                })
                 this.setState({
-                    promoters: response.data
-                });
+                    week: response.data,
+                    promoters: myPromoters
+                })
             })
             .catch(error => {console.log(error)})
+
     }
 
     // HELPER FUNCTIONS
+    handleFinalise(e) {
+        // Create a new Week using promoterIds in Current Week and name for today's date
+        const date = new Date(Date.now());
+        let weekSchema = {
+            'name': 'Week ending ' + date.toString().substr(4,11),
+            'promoterIds': this.state.week.promoterIds
+        }
+        console.log(date);
+        console.log(date.toString().substr(4,11))
+        axios.post('http://localhost:8000/api/week/add', weekSchema)
+            .then(response => {
+                console.log(response);
+                // Delete current week's promoters if new week finalised successfully
+                let emptyWeekSchema = {
+                    'name': 'Current Week',
+                    'promoterIds': []
+                }
+                axios.put('http://localhost:8000/api/week/updateWeek/60407bdb89bf23d411a39d77', emptyWeekSchema)
+                    .then(response2 => {
+                        console.log(response2);
+                        
+                    })
+                    .catch(error2 => {console.log(error2)})
+            })
+            .catch(error => {console.log(error)})
+
+    }
+
     handleToggle(e) {
         this.setState({
             before12: !this.state.before12
@@ -196,6 +246,30 @@ class Promoters extends React.Component {
     deleteProm(promID) {
         axios.delete(`http://localhost:8000/api/prom/deleteProm/${promID}`)
             .then((response) => {
+                let promSchema = {
+                    'promoterId': promID
+                }
+                axios.put(`http://localhost:8000/api/week/removePromoter/${this.state.week._id}`, promSchema)
+                    .then((response2) => {
+                        var newWeek = this.state.week;
+                        newWeek.splice(this.state.week.indexOf(promID),1);
+                        this.setState({
+                            week: newWeek
+                        })
+                    })
+                    .catch(error2 => {console.log(error2)})
+
+                var promIndex;
+                var newPromoters = this.state.promoters;
+                this.state.promoters.map((prom, key) => {
+                    if (prom._id === promID) {
+                        promIndex = key
+                    }
+                })
+                newPromoters.splice(promIndex, 1)
+                this.setState({
+                    promoters: newPromoters
+                })
                 window.location.reload(false);
             })
             .catch(error => {console.log(error)})
@@ -206,8 +280,7 @@ class Promoters extends React.Component {
         if (!this.state.promoters) {
             return <LoadingScreen text = {'Fetching Data...'}/>
         }
-
-        const myPromoters = (
+        var myPromoters = (
             this.state.promoters.map((prom, key) => {
                 // Case Insensitive Filter
                 const LCName = prom.guestlist.name.toLowerCase();
@@ -230,12 +303,21 @@ class Promoters extends React.Component {
                 }
             })
         )
+        if (this.state.promoters.length === 0) {
+            myPromoters = <div className = "noPromoters"> No Promoters, Start by adding some Promoters. </div>
+        }
 
-        const addPromoterButton = <AwesomeButton href = "/promoter/add" type = "secondary">Add Promoter</AwesomeButton>
+        const addPromoterButton = <AwesomeButton href = {`/promoter/add/${this.state.week._id}`} type = "secondary">Add Promoter</AwesomeButton>
         const toggle = <Toggle checked = {this.state.before12} icons = {false} onChange = {this.handleToggle}/>
-        
+        var finaliseButton = ""
+        if (this.state.week._id === '60407bdb89bf23d411a39d77') {
+            finaliseButton = <AwesomeButton 
+                onPress = {() => {if (window.confirm('Are you sure you want to finalise this Week?')) this.handleFinalise()}} 
+                type = "primary"
+            >Finalise Week</AwesomeButton>
+        }
         return (
-            <Content heading = 'Promoters' headingright = {addPromoterButton} headingright2 = {toggle}>
+            <Content heading = {`Promoters - ${this.state.week.name}`} headingright = {addPromoterButton} headingright2 = {toggle}>
                 <Input 
                     type = "text" 
                     placeholder = "Filter.."
@@ -244,6 +326,12 @@ class Promoters extends React.Component {
                     onChange = {this.handleFilter}
                 />
                 {myPromoters}
+                <br/>
+                {finaliseButton}
+
+                <Link to = "/history/promoter">
+                    <AwesomeButton type = "secondary">View History</AwesomeButton>
+                </Link>
             </Content>
         )
     }
@@ -290,7 +378,7 @@ class SinglePromoter extends React.Component {
                     </div>
                 </div>
                 <div className = "edit">
-                    <Link to={`/promoter/edit/${this.props.promoter._id}`}>
+                    <Link to = {`/promoter/edit/${this.props.promoter._id}`}>
                         <Icon icon={bookEdit} height = "40px" width = "30px" color = "black"/>
                     </Link>
                 </div>

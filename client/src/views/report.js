@@ -13,7 +13,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import "../css/random.css";
 
-class Homepage extends React.Component {
+class Report extends React.Component {
 
     constructor(props) {
         super(props);
@@ -82,4 +82,4 @@ class Homepage extends React.Component {
     }
 }
 
-export default Homepage;
+export default Report;

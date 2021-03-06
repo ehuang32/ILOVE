@@ -21,3 +21,4 @@ mongoose.connect(dbURI, options, function(err) {
 
 require('./prom.js');
 require('./booking.js');
+require('./week.js');
