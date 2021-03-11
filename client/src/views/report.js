@@ -48,13 +48,14 @@ class Report extends React.Component {
         var totalCommission = 0;
         const rowData = (
             this.state.promoters.map((prom, key) => {
-                totalCommission += this.state.commission*prom.guestlist.number;
+                totalCommission += this.state.commission*(prom.guestlist.numberBefore+prom.guestlist.numberAfter);
                 return (
-                    { promoter: prom.guestlist.name, guestlists: prom.guestlist.number, commission: '$'+this.state.commission*prom.guestlist.number}
+                    { promoter: prom.guestlist.name, guestlists_b12: prom.guestlist.numberBefore, guestlists_a12: prom.guestlist.numberAfter, 
+                        commission: '$'+this.state.commission*(prom.guestlist.numberBefore+prom.guestlist.numberAfter)}
                 )
             })
         )
-        const totalRow = [{ promoter: 'Total', guestlists: ' ', commission: '$'+totalCommission}]
+        const totalRow = [{ promoter: 'Total', guestlists_b12: ' ', guestlists_a12: ' ',commission: '$'+totalCommission}]
         return (
             <Content heading = 'Report'>
                 <Label className = "label">Commission per Guestlist: </Label>
@@ -73,7 +74,8 @@ class Report extends React.Component {
                         pinnedBottomRowData = {totalRow}
                     >
                         <AgGridColumn field="promoter" sortable={true} filter={true}></AgGridColumn>
-                        <AgGridColumn field="guestlists" sortable={true} filter={true}></AgGridColumn>
+                        <AgGridColumn headerName="Guestlists Before 12" field="guestlists_b12" sortable={true} filter={true}></AgGridColumn>
+                        <AgGridColumn headerName="Guestlists After 12" field="guestlists_a12" sortable={true} filter={true}></AgGridColumn>
                         <AgGridColumn field="commission" sortable={true} filter={true}></AgGridColumn>
                     </AgGridReact>
                 </div>
